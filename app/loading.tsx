@@ -1,3 +1,9 @@
+import css from '@/components/AuthProvider/AuthProvider.module.css';
+
 export default function Loading() {
-  return <p>Loading, please wait...</p>;
+  return (
+    <div className={css.loaderContainer}>
+      <div className={css.spinner}></div>
+    </div>
+  );
 }

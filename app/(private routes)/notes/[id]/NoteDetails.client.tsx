@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useParams, notFound } from 'next/navigation';
-import noteService from '@/lib/api';
+import { clientApi } from '@/lib/api/clientApi';
 import type { Note } from '@/types/note';
 import css from './NoteDetails.module.css';
 
@@ -20,7 +20,7 @@ export default function NoteDetailsClient({ id }: NoteDetailsClientProps) {
     error,
   } = useQuery<Note>({
     queryKey: ['note', noteId],
-    queryFn: () => noteService.fetchNoteById(noteId),
+    queryFn: () => clientApi.fetchNoteById(noteId),
     refetchOnMount: false,
   });
 

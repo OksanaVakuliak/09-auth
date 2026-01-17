@@ -3,8 +3,8 @@ import {
   dehydrate,
   HydrationBoundary,
 } from '@tanstack/react-query';
-import noteService from '@/lib/api';
-import NoteDetailsClient from '@/app/notes/[id]/NoteDetails.client';
+import { serverApi } from '@/lib/api/serverApi';
+import NoteDetailsClient from '@/app/(private routes)/notes/[id]/NoteDetails.client';
 import { Note } from '@/types/note';
 import { Metadata } from 'next';
 
@@ -18,7 +18,7 @@ export async function generateMetadata({
   const { id } = await params;
 
   try {
-    const note = await noteService.fetchNoteById(id);
+    const note = await serverApi.fetchNoteById(id);
 
     return {
       title: `${note.title} | NoteHub`,
@@ -53,7 +53,7 @@ export default async function NoteDetailsPage({
 
   await queryClient.prefetchQuery<Note>({
     queryKey: ['note', id],
-    queryFn: () => noteService.fetchNoteById(id),
+    queryFn: () => serverApi.fetchNoteById(id),
   });
 
   return (

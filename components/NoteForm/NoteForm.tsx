@@ -2,7 +2,7 @@
 
 import { useNoteStore } from '@/lib/store/noteStore';
 import * as Yup from 'yup';
-import noteService from '@/lib/api';
+import { clientApi } from '@/lib/api/clientApi';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import css from './NoteForm.module.css';
@@ -23,11 +23,14 @@ const validationSchema = Yup.object({
 export default function NoteForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { draft, setDraft, clearDraft } = useNoteStore();
+  const draft = useNoteStore(state => state.draft);
+  const setDraft = useNoteStore(state => state.setDraft);
+  const clearDraft = useNoteStore(state => state.clearDraft);
+
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { mutate, isPending } = useMutation<Note, Error, CreateNote>({
-    mutationFn: noteService.createNote,
+    mutationFn: clientApi.createNote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       clearDraft();

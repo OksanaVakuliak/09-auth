@@ -3,6 +3,7 @@ import instance from './api';
 import { User } from '@/types/user';
 import type { Note } from '@/types/note';
 import { FetchNotesResponse } from './clientApi';
+import { AxiosResponse } from 'axios';
 
 interface SessionResponse {
   message: string;
@@ -14,21 +15,9 @@ export async function checkServerSession() {
     Cookie: cookieStore.toString(),
   };
 
-  try {
-    const response = await instance.get('/auth/session', {
-      headers: authHeaders,
-    });
-
-    return {
-      headers: response.headers,
-      data: response.data,
-    };
-  } catch {
-    return {
-      headers: {},
-      data: null,
-    };
-  }
+  return instance.get<SessionResponse>('/auth/session', {
+    headers: authHeaders,
+  });
 }
 
 export const serverApi = {
@@ -66,15 +55,10 @@ export const serverApi = {
     return data;
   },
 
-  checkSession: async (): Promise<SessionResponse | null> => {
-    try {
-      const headers = await serverApi.getAuthHeaders();
-      const { data } = await instance.get<SessionResponse>('/auth/session', {
-        headers,
-      });
-      return data;
-    } catch {
-      return null;
-    }
+  checkSession: async (): Promise<AxiosResponse<SessionResponse>> => {
+    const headers = await serverApi.getAuthHeaders();
+    return instance.get<SessionResponse>('/auth/session', {
+      headers,
+    });
   },
 };

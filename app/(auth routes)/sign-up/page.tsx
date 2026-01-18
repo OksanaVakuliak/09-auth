@@ -43,7 +43,7 @@ export default function SignUpPage() {
 
       setUser(user);
 
-      router.push('/profile');
+      router.push('/');
       router.refresh();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

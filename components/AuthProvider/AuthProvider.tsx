@@ -43,10 +43,10 @@ export default function AuthProvider({
 
     if (isAuthenticated) {
       if (pathname === '/sign-in' || pathname === '/sign-up') {
-        router.push('/profile');
+        router.push('/');
       }
     } else {
-      if (pathname.startsWith('/notes') || pathname.startsWith('/profile')) {
+      if (pathname.startsWith('/notes') || pathname.startsWith('/')) {
         router.push('/sign-in');
       }
     }

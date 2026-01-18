@@ -43,7 +43,7 @@ export default function SignInPage() {
 
       setUser(user);
 
-      router.push('/profile');
+      router.push('/');
 
       router.refresh();
     } catch (error: unknown) {

@@ -18,12 +18,11 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith(route)
   );
 
-  if (!accessToken) {
-    if (refreshToken) {
-      const data = await checkServerSession();
-      const setCookie = (
-        data.headers as Record<string, string | string[] | undefined>
-      )['set-cookie'];
+  if (!accessToken && refreshToken) {
+    try {
+      const responseFromAxios = await checkServerSession();
+
+      const setCookie = responseFromAxios.headers['set-cookie'];
 
       if (setCookie) {
         const cookieArray = Array.isArray(setCookie) ? setCookie : [setCookie];
@@ -31,7 +30,7 @@ export async function proxy(request: NextRequest) {
         let response;
 
         if (isPublicRoute) {
-          response = NextResponse.redirect(new URL('/profile', request.url));
+          response = NextResponse.redirect(new URL('/', request.url));
         } else {
           response = NextResponse.next();
         }
@@ -39,19 +38,30 @@ export async function proxy(request: NextRequest) {
         for (const cookieStr of cookieArray) {
           const parsed = parse(cookieStr);
 
+          const cookieName = parsed.accessToken
+            ? 'accessToken'
+            : 'refreshToken';
+          const cookieValue = parsed.accessToken || parsed.refreshToken || '';
+
           response.cookies.set({
-            name: parsed.accessToken ? 'accessToken' : 'refreshToken',
-            value: parsed.accessToken || parsed.refreshToken || '',
+            name: cookieName,
+            value: cookieValue,
             expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
-            path: parsed.Path,
+            path: parsed.Path || '/',
             maxAge: parsed['Max-Age'] ? Number(parsed['Max-Age']) : undefined,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
           });
         }
 
         return response;
       }
+    } catch (error) {
+      console.error('Session refresh failed in middleware:', error);
     }
+  }
 
+  if (!accessToken) {
     if (isPublicRoute) {
       return NextResponse.next();
     }
@@ -61,11 +71,10 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isPublicRoute) {
-    return NextResponse.redirect(new URL('/profile', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
-  if (isPrivateRoute) {
-    return NextResponse.next();
-  }
+
+  return NextResponse.next();
 }
 
 export const config = {

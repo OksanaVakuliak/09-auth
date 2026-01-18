@@ -69,8 +69,10 @@ export async function proxy(request: NextRequest) {
   if (isPrivateRoute) {
     return NextResponse.next();
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/profile/:path*', '/notes/:path*', '/sign-in', '/sign-up'],
+  matcher: ['/', '/profile/:path*', '/notes/:path*', '/sign-in', '/sign-up'],
 };

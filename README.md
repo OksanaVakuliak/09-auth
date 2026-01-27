@@ -50,7 +50,7 @@ Middleware**. This layer intercepts requests to:
 1.  **Clone the repository:**
 
     ```bash
-    git clone [https://github.com/OksanaVakuliak/09-auth.git](https://github.com/OksanaVakuliak/09-auth.git)
+    git clone https://github.com/OksanaVakuliak/09-auth.git
     cd 09-auth
     ```
 
@@ -63,7 +63,7 @@ Middleware**. This layer intercepts requests to:
 3.  **Environment Variables:** Create a `.env.local` file in the root directory:
 
     ```env
-    NEXT_PUBLIC_API_URL=[http://localhost:3000](http://localhost:3000)
+    NEXT_PUBLIC_API_URL=http://localhost:3000
     ```
 
 4.  **Run the development server:**
